@@ -2,6 +2,7 @@
 
 + Cleaned up the loader code, from `run.js` to `src/loader.js`
 + Added middleware utility for requesting an aspect
++ Mover the express things out of `run.js`
 
 # Changelog v0 3/31/2019
 

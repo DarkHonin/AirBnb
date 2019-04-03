@@ -1,7 +1,7 @@
 module.exports = class BaseAspect{
 	static AspectName(){};
-	AspectAuthor(){};
-	AspectInfo(){ return {
+	static AspectAuthor(){};
+	static AspectInfo(){ return {
 		version : "0",
 		description : "heck"
 	}}
