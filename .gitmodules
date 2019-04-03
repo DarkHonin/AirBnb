@@ -1,0 +1,6 @@
+[submodule "ui"]
+	path = ui
+	url = https://github.com/DarkHonin/AirBnb.git
+[submodule "framework"]
+	path = framework
+	url = https://github.com/DarkHonin/AirBnb.git

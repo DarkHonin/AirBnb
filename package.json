@@ -1,0 +1,28 @@
+{
+  "name": "bitwasp_airbnb",
+  "version": "1.0.0",
+  "description": "AirBnb Clone",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.2",
+    "handlebars": "^4.1.1",
+    "mocha": "^6.0.2",
+    "mongodb": "^3.2.2",
+    "passport": "^0.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarkHonin/AirBnb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DarkHonin/AirBnb/issues"
+  },
+  "homepage": "https://github.com/DarkHonin/AirBnb#readme"
+}
