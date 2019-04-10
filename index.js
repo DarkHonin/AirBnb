@@ -6,7 +6,7 @@ const app = express()
 framework.searchDir(__dirname)
 framework.loadModules(app)
 global.app_root = __dirname
-const PORT = 80
+const PORT = 5000
 
 app.listen(PORT, f => {
 	console.log(`Listening on ${PORT}`)
