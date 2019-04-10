@@ -47,8 +47,11 @@
 //     store: new MongoStore({ mongooseConnection: mongoose.connection })
 // }));
 
-var MongoClient = require('mongodb').MongoClient;
 
+
+//connecting to the cloud a client
+var MongoClient = require('mongodb').MongoClient;
+//connection usin url of the client at the cluster
 var uri = "mongodb+srv://allie:Moknare95@airbnb-ttiyl.mongodb.net/test?retryWrites=true";
 MongoClient.connect(uri, { useNewUrlParser: true } ,function(err, client) {
    const collection = client.db("air_db").collection("devices");
