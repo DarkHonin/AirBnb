@@ -6,10 +6,13 @@ module.exports = class Database extends BaseAspect{
     static AspectName(){return "BitWaspAirnBnb-database"}
     constructor(app){
         super(app)
-        module = this
-        uri = process.env.SRV
+        var mod = this
+        var uri = process.env.SRV
         MongoClient.connect(uri, { useNewUrlParser: true } ,function(err, client) {
-           module.connection = client.db("air_db")
+            if(err){
+                throw err
+            }
+           mod.connection = client.db("air_db")
         })
         console.log("database connected")
     }
