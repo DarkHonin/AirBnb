@@ -27,10 +27,21 @@ router.use(function(req,res,next){
 
 // router.engine('ejs', engine);
 // router.set("view engine", "ejs");
-
+const { parse } = require('querystring');
 router.post(express.urlencoded())
 router.post('/', function (req, res) {
-    console.log(req.body)
+    if (req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            console.log(
+                parse(body)
+            );
+            res.end('ok');
+        });
+    }
     //Listing.find({}).where('available').where('booking').equals(null).exec(function(err, listings) {
       //  res.render("index", { listings }); 
   //res.render("index", {});
