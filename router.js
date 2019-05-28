@@ -27,25 +27,30 @@ router.use(function(req,res,next){
 
 // router.engine('ejs', engine);
 // router.set("view engine", "ejs");
-const { parse } = require('querystring');
-router.post(express.urlencoded())
+const parser = (req, res, next) => {
+  if (req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+    req.on("end", () => {
+      req['json'] = JSON.parse(body)
+      next()
+    })
+}
+}
+router.post("/", parser)
 router.post('/', function (req, res) {
-    if (req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => {
-            body += chunk.toString();
-        });
-        req.on('end', () => {
-            console.log(
-                parse(body)
-            );
-            res.end('ok');
-        });
-    }
-    //Listing.find({}).where('available').where('booking').equals(null).exec(function(err, listings) {
-      //  res.render("index", { listings }); 
+  console.log(req.json)
+  query = Listing.find({}).where('available').where('booking')
+  if (req.json["price_max"])
+    query = query.where("totalPrice").lt(req.json["price_max"])
+  query = query.equals(null)
+  query.exec(function(err, listings) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(listings));
   //res.render("index", {});
-//});
+  });
 })
 
 router.get("/new", function (req, res) {
