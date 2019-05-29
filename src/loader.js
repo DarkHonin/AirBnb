@@ -22,11 +22,11 @@ module.exports.loadModules = (app) => {
         global.MODULES[name] = new v(app)
         console.log(`Module init: ${v.AspectName()}`)
     })
-    app._router.stack.forEach(function(r){
-        if (r.route && r.route.path){
-            console.log(r.route.path)
-        }
-    })
+    for(var k in MODULES){
+        aspect = MODULES[k]
+        aspect.register_routes(app)
+        console.log(`Routes init: ${k}`)
+    }
 }
 
 module.exports.expectsAspect = (aspectName)=>{

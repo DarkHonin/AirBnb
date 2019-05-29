@@ -8,6 +8,7 @@ module.exports = class BaseAspect{
 
 	constructor(baseApp){
 		console.log("Aspect init triggered")
-
 	}
+
+	register_routes(baseApp){}
 }
