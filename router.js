@@ -16,10 +16,6 @@ router.use(session({secret: 'mysecretphrase',
                   resave: false,
                   saveUninitialized: true
 }));
-router.use(function(req,res,next){
-  res.locals.currentUser = req.session.user;
-  next();
-});
 
 const parser = (req, res, next) => {
   if (req.method === 'POST') {
@@ -37,7 +33,7 @@ const parser = (req, res, next) => {
 router.post("/", parser)
 router.post('/', function (req, res) {
   console.log(req.json)
-  query = Listing.find({$lt: "price_max"}).where('available').where('booking')
+  query = Listing.find({}).where('available').where('booking')
   if (req.json["price_max"])
     query = query.where("price").lt(req.json["price_max"])
   query = query.equals(null)
@@ -57,16 +53,17 @@ router.get("/new", function (req, res) {
   }
 });
 
-router.post("/listings", function (req, res) {
-  Listing.create({name: req.body.name,
-                  description: req.body.description,
-                  availableDate: currentListing.available,
-                  price: req.body.price,
-                  image: req.body.image,
-                  available: req.body.available,
-                  booking: null,
-                  owner: req.session.user
-                }),
+router.post("/listings", (req, res) => {
+                                          Listing.create({
+                                            name: req.body.name,
+                                            description: req.body.description,
+                                            price: req.body.price,
+                                            image: req.body.image,
+                                            available: req.body.available,
+                                            booking: null,
+                                            owner: req.session.user
+                                          }
+                                        ),
     function (err, listing) {
       if (err) {
         res.send("There was a problem adding the information to the database.");
@@ -90,7 +87,7 @@ router.get("/listings", function(req, res) {
 });
 
 router.post("/bookings/new", function(req, res) {
-  if (req.session.user) {
+  if (req.json['test_booking']) {
     require('url').parse("/booking/new", true);
     Listing.findById(req.query.id, function(err, listing) {
       req.session.listing = listing;
