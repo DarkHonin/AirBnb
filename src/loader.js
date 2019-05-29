@@ -22,11 +22,15 @@ module.exports.loadModules = (app) => {
         global.MODULES[name] = new v(app)
         console.log(`Module init: ${v.AspectName()}`)
     })
+    app._router.stack.forEach(function(r){
+        if (r.route && r.route.path){
+            console.log(r.route.path)
+        }
+    })
 }
 
 module.exports.expectsAspect = (aspectName)=>{
     return (req, res, next) => {
-        console.log("Heck")
         req[aspectName] = MODULES[aspectName]
         next()
     }
