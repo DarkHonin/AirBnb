@@ -5,7 +5,6 @@ var db = require('./config/db');
 var mongoose = require('mongoose');
 var session = require('express-session');
 var Booking = require('./app/models/booking')
-var User = require('./app/models/user')
 var Listing = require('./app/models/listing')
 var engine = require('ejs-locals');
 
@@ -20,15 +19,10 @@ router.use(session({secret: 'mysecretphrase',
                   resave: false,
                   saveUninitialized: true
 }));
-router.use(function(req,res,next){
-  res.locals.currentUser = req.session.user;
-  next();
-});
 
 // router.engine('ejs', engine);
 // router.set("view engine", "ejs");
 const { parse } = require('querystring');
-router.post(express.urlencoded())
 router.post('/', function (req, res) {
     if (req.method === 'POST') {
         let body = '';
@@ -57,15 +51,17 @@ router.get("/new", function (req, res) {
   }
 });
 
-router.post("/listings", function (req, res) {
-  Listing.create({name: req.body.name,
-                  description: req.body.description,
-                  price: req.body.price,
-                  image: req.body.image,
-                  available: req.body.available,
-                  booking: null,
-                  owner: req.session.user
-                }),
+router.post("/listings", (req, res) => {
+                                          Listing.create({
+                                            name: req.body.name,
+                                            description: req.body.description,
+                                            price: req.body.price,
+                                            image: req.body.image,
+                                            available: req.body.available,
+                                            booking: null,
+                                            owner: req.session.user
+                                          }
+                                        ),
     function (err, listing) {
       if (err) {
         res.send("There was a problem adding the information to the database.");
