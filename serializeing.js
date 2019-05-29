@@ -7,7 +7,7 @@ module.exports.serializeUser = (user, done) => {
 
 module.exports.deserializeUser = (id, done)=>{
 	console.log("deSerializing user")
-	User.where({id:id}, function(err, user) {
+	User.where({id:id}).exec(function(err, user) {
 		done(err, user);
 	});
 }

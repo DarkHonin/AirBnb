@@ -7,35 +7,43 @@ const passport = require("passport")
 const {serializeUser, deserializeUser, findOrCreateUser} = require("./serializeing.js")
 const User = require("./user.js")
 const router = express.Router()
+const {auth, signin, currentUser} = require("./shortcuts.js")
+var session = require('express-session');
+const uuid = require('uuid/v4')
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/u/google' }), (req, res) => {
-	console.log(req.user)
-	res.redirect("/")
-});
+router.get('/google/callback', auth, signin);
 
-router.get("/", passport.authenticate('google', { failureRedirect: '/u/google' }), loader.expectsAspect("BitwaspAirBnB_Users"), (req, res) => {
-	console.log(req.user)
-	res.render("profile", {user: req.user})
+router.get('/', currentUser, (req, res) => {
+	return res.json(req.user)
 })
 
 module.exports = class UI extends BaseAspect{
-    static AspectAuthor(){return "wgourley"}
-    static AspectName(){return "BitwaspAirBnB_Users"}
-    constructor(app){
+	static AspectAuthor(){return "wgourley"}
+	static AspectName(){return "BitwaspAirBnB_Users"}
+	constructor(app){
 		super(app)
 		app.use(passport.initialize());
 		app.use(passport.session());
-		app.use("/u", router)
+		app.use(session({
+			genid: (req) => { return uuid() },
+			secret: 'keyboard cat',
+			resave: false,
+			saveUninitialized: true,
+			expires: new Date(Date.now() + (30 * 86400 * 1000))
+		}))
 		this.load_secrets()
+	}
+
+	register_routes(app){
+		app.use("/u", router)
 	}
 	
 	load_secrets(){
-		fs.readFile(`${__dirname}/secrets.json`,{encoding: 'utf-8'}, (err, data)=>{
-			var secrets = JSON.parse(data)
-			this.init_passport(secrets)
-		})
+		var data = fs.readFileSync(`${__dirname}/secrets.json`,{encoding: 'utf-8'})
+		var secrets = JSON.parse(data)
+		this.init_passport(secrets)
 	}
 
 	init_passport({GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET}){

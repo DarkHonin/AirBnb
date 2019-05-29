@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 
 var usersSchema = mongoose.Schema ({
-  email: { type: Object,  required: true },
+  id: {type:String, required: true, unique: true},
   displayName: { type: String,  required: true },
-  id: {type:String, required: true, unique: true}
+  email: { type: Object,  required: true },
+  accountType: {type: Number, default: -1}
 });
 
 const User = mongoose.model('User', usersSchema);
