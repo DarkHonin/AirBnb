@@ -5,14 +5,10 @@ var db = require('./config/db');
 var mongoose = require('mongoose');
 var session = require('express-session');
 var Booking = require('./app/models/booking')
-var User = require('./app/models/user')
 var Listing = require('./app/models/listing')
 var engine = require('ejs-locals');
 
 const router = express.Router()
-
-var bcrypt = require('bcrypt');
-  var loops = 10;
 
 router.use(express.static('public'));
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -25,8 +21,6 @@ router.use(function(req,res,next){
   next();
 });
 
-// router.engine('ejs', engine);
-// router.set("view engine", "ejs");
 const parser = (req, res, next) => {
   if (req.method === 'POST') {
     let body = '';
@@ -39,12 +33,13 @@ const parser = (req, res, next) => {
     })
 }
 }
+
 router.post("/", parser)
 router.post('/', function (req, res) {
   console.log(req.json)
-  query = Listing.find({}).where('available').where('booking')
+  query = Listing.find({$lt: "price_max"}).where('available').where('booking')
   if (req.json["price_max"])
-    query = query.where("totalPrice").lt(req.json["price_max"])
+    query = query.where("price").lt(req.json["price_max"])
   query = query.equals(null)
   query.exec(function(err, listings) {
     res.setHeader('Content-Type', 'application/json');
@@ -65,6 +60,7 @@ router.get("/new", function (req, res) {
 router.post("/listings", function (req, res) {
   Listing.create({name: req.body.name,
                   description: req.body.description,
+                  availableDate: currentListing.available,
                   price: req.body.price,
                   image: req.body.image,
                   available: req.body.available,
@@ -74,11 +70,13 @@ router.post("/listings", function (req, res) {
     function (err, listing) {
       if (err) {
         res.send("There was a problem adding the information to the database.");
-      } else {
+      }
+      else {
         console.log('New listing has been created');
       }
+      res.json(listing)
     };
-  res.redirect("/listings");
+  // res.redirect("/listings");
 });
 
 router.get("/listings", function(req, res) {
@@ -91,23 +89,21 @@ router.get("/listings", function(req, res) {
   }
 });
 
-router.get("/bookings/new", function(req, res) {
+router.post("/bookings/new", function(req, res) {
   if (req.session.user) {
     require('url').parse("/booking/new", true);
     Listing.findById(req.query.id, function(err, listing) {
       req.session.listing = listing;
       req.session.save();
-      res.render("bookings/new", { listing })
+      res.json("bookings/new", { listing })
     });
-  }
-  else {
-    res.redirect("/users/login");
   }
 });
 
 router.post("/bookings/new", function(req, res) {
   Listing.findById(req.session.listing, function(err, currentListing) {
     Booking.create({bookingDate: currentListing.available,
+                    availableDate: currentListing.available,
                     confirmed: false,
                     rejected: false,
                     totalPrice: currentListing.price,
@@ -148,80 +144,37 @@ router.get('/bookings/complete', function(req, res) {
           });
         });
         res.redirect('/bookings');
-        Listing.findOneAndUpdate({ _id: currentBooking.listing }, {$set: { booking: currentBooking } }, {new: true}, function(err, listing) {});
+        Listing.findOneAndUpdate({ _id: currentBooking.listing }, {$set: { booking: currentBooking } }, {new: true}, function(err, listing) {
+          if(err){
+            res.send(err)
+          }
+          res.json(listing)
+        });
       });
     })
   }
   else if (req.query.action === "reject") {
-    Booking.findOneAndUpdate({ _id: req.query.booking_id }, {$set: { rejected: true } }, {new: true}, function(err, booking) {} );
-    res.redirect('/bookings');
+    Booking.findOneAndUpdate({ _id: req.query.booking_id }, {$set: { rejected: true } }, {new: true}, function(err, booking) {
+      if(err){
+        res.send(err)
+      }
+      res.json(booking)
+    } );
+    // res.redirect('/bookings');
   }
 });
 
-router.get("/users/new", function (req, res) {
-  res.render("users/new", {});
-});
 
-router.post("/users/new", function (req, res) {
-  if (req.body.password === req.body.password_confirmation) {
-      bcrypt.hash(req.body.password, loops, function(err, hash) {
-        User.create({name:      req.body.name,
-                     email:     req.body.email,
-                     password:  hash            }),
-        function (err, listing) {
-          if (err) {
-            res.send("Error adding your information");
-          }
-          else {
-            console.log('New listing has been created');
-          }
-        };
-        setTimeout(function() {
-          User.findOne({'email': req.body.email}, function(err,user){
-            req.session.user = user;
-            req.session.save();
-            res.redirect("/listings");
-          });
-        }, 500);
-      });
-  }
-  else {
-    console.log("Failed to add User");
-    res.redirect("/users/new")};
-});
+router.post('/listing_filter', (req, res) => {
+  req.session.filter_date = req.query.filter_date
+  Listing.find({}).where('available').equals(req.session.filter_date).where('booking').equals(null).exec(function(err, filtered_list){
+    if(err){
+      res.send(err)
+    }
+    res.json(filtered_list)
+  })
+})
 
-router.get('/users/login', function(req, res){
-  res.render("users/login", {});
-});
-
-router.post('/users/login', function(req, res){
-  var userInput = req.body.password;
-  User.findOne({'email': req.body.email}, function(err,user){
-    if (user != null){
-      var currentPassword = user.password;
-      bcrypt.compare(userInput, currentPassword, function(err, bcryptRes) {
-          if (bcryptRes == true) {
-            User.findOne({'email': req.body.email}, function(err, user){
-              req.session.user = user;
-              req.session.save();
-            });
-            res.redirect("/listings");
-          } else {
-            res.redirect("/users/login");
-          }
-      });
-    } else {
-      res.redirect("/users/new")
-    };
-  });
-});
-
-router.get('/listings_filter', function(req, res){
-  req.session.filter_date = req.query.filter_date;
-  Listing.find({}).where('available').equals(req.session.filter_date).where('booking').equals(null).exec(function(err, listings) {
-    res.render("listings/index", { listings });
-  });
-});
 
 router.get('/users/logout', function(req, res) {
   req.session.destroy();
