@@ -1,11 +1,19 @@
-#login {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: fit-content;
-    height: fit-content;
-    text-align: center;
+body{
+    background-image: URL("../img/Background.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.float{
+    display: flex;
+}
+
+.float.center{
+    align-content: center;
+    justify-content: center;
+}
+
+.contain{
+    max-width: fit-content
 }
