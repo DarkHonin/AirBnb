@@ -4,7 +4,7 @@ const express = require("express")
 const path = require('path');
 const users = require("../users/aspect.js")
 var exphbs  = require('express-handlebars');
-
+const {auth, currentUser} = require("../users/shortcuts.js")
 const router = express.Router()
 
 router.get("/handlebars", (req, res) =>{
@@ -12,9 +12,11 @@ router.get("/handlebars", (req, res) =>{
     res.sendFile(path.join(app_root+"/node_modules/handlebars/dist/handlebars.runtime.js"));
 })
 
-router.get("/", loader.expectsAspect("BitwaspAirBnB_Users"), (req,res) => {
+router.get("/", currentUser, (req,res) => {
     console.log(req.user)
-    res.render("index")
+    if(req.user)
+        return res.render("index", {user:req.user})
+    res.render("login")
 });
 
 router.get("/login", loader.expectsAspect("BitwaspAirBnB_Users"), (req, res) =>{
@@ -29,6 +31,9 @@ module.exports = class UI extends BaseAspect{
         app.use('/static', express.static('assets'))
         app.engine('handlebars', exphbs({defaultLayout: 'main'}));
         app.set('view engine', 'handlebars');
+    }
+    
+    register_routes(app){
         app.use("/", router)
     }
 }
