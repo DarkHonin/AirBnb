@@ -11,4 +11,6 @@ module.exports = class Database extends BaseAspect{
         this.Bookings = require('./app/models/booking')
         console.log("loaded Database")
     }
+
+    
 }
