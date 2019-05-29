@@ -2,12 +2,12 @@ const passport = require("passport")
 
 module.exports.auth = passport.authenticate('google', { failureRedirect: '/u/google' })
 
-module.exports.signin = (req, res) => {
+module.exports.signin = (req, res, next) => {
     req.login(req.user, (err) => {
 		if (err) console.log(err);
 		console.log('is authenticated?: ' + req.isAuthenticated());
 		req.session['user'] = JSON.stringify(req.user)
-		return res.json(req.user)
+		next()
 	})
 }
 

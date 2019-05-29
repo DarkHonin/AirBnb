@@ -13,7 +13,12 @@ const uuid = require('uuid/v4')
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', auth, signin);
+router.get('/google/callback', auth, signin, (req, res) => {res.redirect("/")});
+
+router.get('/logout', (req, res)=>{
+	req.logout();
+	res.json({status:true, data:"You are now logged out"})
+})
 
 router.get('/', currentUser, (req, res) => {
 	return res.json(req.user)
