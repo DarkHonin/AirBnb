@@ -68,3 +68,38 @@ body{
 .slider[value='1']>.display{background-color: green;}
 .slider[value='0']>.display:after{right: 100%;}
 .slider[value='1']>.display:after{left: calc(100% - 20px);}
+
+aside{
+    border-right: 2px solid black;
+    display: block;
+    margin: auto;
+    padding: 0.5em;
+    height: -webkit-fill-available
+}
+
+aside nav{
+    width: fit-content;
+    margin: 0
+}
+
+aside h3{
+    text-decoration: underline;
+}
+
+aside a{
+    color: grey;
+    text-decoration: none;
+    display: block
+}
+
+aside a:hover{
+    text-decoration: underline;
+}
+
+section{
+    display: flex;
+}
+
+article{
+    flex: 1;
+}

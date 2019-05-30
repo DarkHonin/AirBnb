@@ -1,11 +1,33 @@
 <script>
 function logout(event){
-  event.preventDefault()
+  fetch("/u/logout").then(()=>{window.location.reload()})
 }
 </script>
-<div class="float center">
-  <div class="contain">
-    <h2>Welcome to Bitwasp_AirBnB_</h2>
-    <a href="/u/logout" data-event event-click='logout'>Logout</a>
-  </div>
-</div>
+<section>
+  <aside>
+    <nav>
+      <nav>
+        <h3>Accomidation</h3>
+        <a href="#">Browse</a> 
+        <a href="#">Close to me</a> 
+      </nav>
+      {{#if user.accountType}}
+        <nav>
+        <h3>My properties</h3>
+        <a href="#">Create new</a> 
+        <a href="#">Manage</a> 
+        <a href="#">Bookings</a>
+      </nav>
+      {{/if}}
+      <nav>
+        <h3>Account</h3>
+        <a href="#">My profile</a> 
+        <a href="#">Settings</a> 
+        <a href="/u/logout" data-event event-click='logout'>Logout</a>
+      </nav>
+    </nav>
+  </aside>
+  <article>
+
+  </article>
+</section>

@@ -22,10 +22,17 @@ function select_value(event){
     }
     value = slider.getAttribute('value')
     fetch('/u/set_accout_type', {method:"POST", headers: {'Content-Type': 'application/json'}, body: JSON.stringify({set:value})}).then(responce => {
-        console.log(responce)
+        responce.json().then(data=>{
+            if(data.status)
+                document.querySelector("#continue").removeAttribute('disabled')
+        })
     })
     console.log(event)
 }
+function to_index(event){
+    window.location.reload()
+}
+
 </script>
 
 <div class="float center">
@@ -34,4 +41,5 @@ function select_value(event){
     <span class="display"></span>
     <label value="1">Landlord</label>
   </div>
+<button id="continue" disabled data-event event-click='to_index'>Continue</button>
 </div>
