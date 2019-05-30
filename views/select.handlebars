@@ -1,0 +1,37 @@
+<script>
+function select_value(event){
+    slider = event.target;
+    if(!slider.classList.contains('slider'))
+        event.path.forEach((v, k)=>{
+            if(v.classList)
+                if(v.classList.contains('slider')){
+                    slider = v;
+                    return
+                }
+        })
+    if(event.target.hasAttribute('value'))
+        slider.setAttribute('value', event.target.getAttribute('value'))
+    else{
+        if(!slider.hasAttribute('value'))
+            slider.setAttribute('value', '0')
+        else{
+            curval = slider.getAttribute('value')
+            if (curval == '0') slider.setAttribute('value', '1')
+            if (curval == '1') slider.setAttribute('value', '0')
+        }
+    }
+    value = slider.getAttribute('value')
+    fetch('/u/set_accout_type', {method:"POST", headers: {'Content-Type': 'application/json'}, body: JSON.stringify({set:value})}).then(responce => {
+        console.log(responce)
+    })
+    console.log(event)
+}
+</script>
+
+<div class="float center">
+  <div class="contain slider" data-event event-click='select_value'>
+    <label value="0" >Tennant</label>
+    <span class="display"></span>
+    <label value="1">Landlord</label>
+  </div>
+</div>
