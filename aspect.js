@@ -11,6 +11,23 @@ const {auth, signin, currentUser} = require("./shortcuts.js")
 var session = require('express-session');
 const uuid = require('uuid/v4')
 
+const parser = (req, res, next) => {
+	if (req.method === 'POST') {
+	  let body = '';
+	  req.on('data', chunk => {
+		  body += chunk.toString();
+	  });
+	  req.on("end", () => {
+		try{
+			req['json'] = JSON.parse(body)
+		} catch(SyntaxError){
+			console.warn("failed to parse incoming json")
+		}
+		next()
+	  })
+  }
+  }
+
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', auth, signin, (req, res) => {res.redirect("/")});
@@ -22,6 +39,22 @@ router.get('/logout', (req, res)=>{
 
 router.get('/', currentUser, (req, res) => {
 	return res.json(req.user)
+})
+
+router.post('/set_accout_type', parser, currentUser, (req, res) => {
+	if(!req.user)
+		return res.json({status: false, reason: "You need to be logged in to edit your account"})
+	if(!req.json['set'])
+		return res.json({status: false, reason: "Expected property 'set' of value '1' or '0'"})
+	if(isNaN(req.json['set']))
+		return res.json({status: false, reason: "Expected number got something else"})
+	val = parseInt(req.json['set'])
+	console.log("Current acount type: ",req.user.accountType)
+	console.log(val)
+	req.user.accountType = val
+	req.user.save()
+	console.log("New acount type: ",req.user.accountType)
+	return res.json({status: true})
 })
 
 module.exports = class UI extends BaseAspect{
