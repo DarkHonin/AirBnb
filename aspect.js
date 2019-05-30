@@ -13,10 +13,12 @@ router.get("/handlebars", (req, res) =>{
 })
 
 router.get("/", currentUser, (req,res) => {
-    console.log(req.user)
-    if(req.user)
+    if(req.user){
+        if(req.user.accountType == -1)
+            return res.render("select", {user:req.user})
         return res.render("index", {user:req.user})
-    res.render("login")
+    }
+    res.render("login", {subheading:"Login_"})
 });
 
 router.get("/login", loader.expectsAspect("BitwaspAirBnB_Users"), (req, res) =>{
