@@ -7,6 +7,7 @@ var usersSchema = mongoose.Schema ({
   accountType: {type: Number, default: -1}
 });
 
+
 const User = mongoose.model('User', usersSchema);
 
 module.exports = User

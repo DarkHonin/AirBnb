@@ -34,6 +34,7 @@ router.get('/google/callback', auth, signin, (req, res) => {res.redirect("/")});
 
 router.get('/logout', (req, res)=>{
 	req.logout();
+	req.session['user'] = undefined
 	res.json({status:true, data:"You are now logged out"})
 })
 
