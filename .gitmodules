@@ -4,9 +4,9 @@
 [submodule "framework"]
 	path = framework
 	url = https://github.com/DarkHonin/AirBnb.git
-[submodule "database"]
-	path = database
-	url = https://github.com/DarkHonin/AirBnb.git
 [submodule "users"]
 	path = users
+	url = https://github.com/DarkHonin/AirBnb.git
+[submodule "database"]
+	path = database
 	url = https://github.com/DarkHonin/AirBnb.git

@@ -1,35 +1,6 @@
-<meta name="google-signin-client_id" content="{{google_id}}">
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
-
-<script>
-    function start() {
-      gapi.load('auth2', function() {
-        auth2 = gapi.auth2.init({
-          client_id: '{{google_id}}',
-
-          // Scopes to request in addition to 'profile' and 'email'
-          //scope: 'additional_scope'
-        });
-      });
-    }
-    function onSigninOk(auth_info){
-      if (auth_info['code']){
-        // Got auth code, post to fetch then do something
-      }else{
-        // Signin failed try again dude
-      }
-    }
-</script>
-
-
-<div id="login">
-        <h2>Bitwasp AirBnb</h2>
-      <button id="signin_button">Sign in with Google</button>
-      <script>
-        $('#signin_button').click(function() {
-          auth2.grantOfflineAccess().then(onSigninOk);
-        });
-      </script>
-
+<div class="float center">
+  <div class="contain">
+    <h2>Welcome to Bitwasp_AirBnB_</h2>
+    <a href="/u/google">Login with google</a>
+  </div>
 </div>
